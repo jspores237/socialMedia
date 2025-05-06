@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>All Users</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<h1>All Users</h1>
+
+<!-- Show a message if no users found -->
+<div th:if="${users.isEmpty()}" class="no-users-message">
+    <p>No users found.</p>
+</div>
+
+<!-- Display users if they exist -->
+<div th:unless="${users.isEmpty()}" class="users-container">
+    <ul class="user-list">
+        <li th:each="user : ${users}" class="user-item">
+            <!-- Display user details properly -->
+            <div class="user-card">
+                <img th:if="${user.profilePicture}" th:src="${user.profilePicture}" alt="Profile picture" class="profile-pic">
+                <img th:unless="${user.profilePicture}" src="/images/default-avatar.png" alt="Default profile" class="profile-pic">
+
+                <div class="user-info">
+                    <h2 th:text="${user.userName}">Username</h2>
+                    <p th:if="${user.bio}" th:text="${user.bio}">Bio</p>
+                    <p th:if="${user.location}" class="location">
+                        <span class="location-icon">📍</span>
+                        <span th:text="${user.location}">Location</span>
+                    </p>
+                    <p class="email" th:text="${user.email}">Email</p>
+                </div>
+
+                <div class="user-actions">
+                    <a th:href="@{/users/{id}(id=${user.id})}" class="view-btn">View Profile</a>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+</body>
+</html>

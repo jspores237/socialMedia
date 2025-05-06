@@ -1,52 +1,26 @@
-package com.example.socialMediaApp.Model;
-import jakarta.persistence.*;
+package com.example.socialMediaApp.Dto;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
-@Entity
-@Table(name="users")
 
-public class User {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class UserDto {
     private Long id;
-
-    @Column(nullable = false, unique = true)
     private String email;
-
-    @Column(nullable = false)
-    private String password;
-
-    @Column(nullable = false, unique = true)
     private String userName;
-
     private String profilePicture;
     private String coverPhoto;
     private String bio;
-
-    @Column(nullable = false)
     private LocalDateTime dateOfBirth;
-
     private String location;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
+    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    /*
-    @OneToMany(mappedBy = "userPosts", cascade = CascadeType.ALL)
-    private List<Post> posts = new ArrayList<>();
-   */
+    public UserDto() {}
 
-    public User() {}
-
-    public User(Long id, String email, String password, String userName, String profilePicture, String coverPhoto, String bio, LocalDateTime dateOfBirth, String location, LocalDateTime createdAt, LocalDateTime updatedAt, Set<User> friends) {
+    public UserDto(Long id, String email, String userName, String profilePicture,
+                   String coverPhoto, String bio, LocalDateTime dateOfBirth,
+                   String location, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.email = email;
-        this.password = password;
         this.userName = userName;
         this.profilePicture = profilePicture;
         this.coverPhoto = coverPhoto;
@@ -55,27 +29,9 @@ public class User {
         this.location = location;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.friends = friends;
     }
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_friends",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "friend_id")
-    )
-
-
-
-
-
-
-
-
-
-    private Set<User> friends = new HashSet<>();
-
-
+    // Getters and setters
     public Long getId() {
         return id;
     }
@@ -90,14 +46,6 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getUserName() {
@@ -162,13 +110,5 @@ public class User {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public Set<User> getFriends() {
-        return friends;
-    }
-
-    public void setFriends(Set<User> friends) {
-        this.friends = friends;
     }
 }

@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${user.userName} + ' - Profile'">User Profile</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f8fa;
+        }
+
+        /* Layout */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .navbar {
+            background-color: #1da1f2;
+            color: white;
+            padding: 10px 0;
+            margin-bottom: 20px;
+        }
+
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .navbar h1 {
+            font-size: 1.5rem;
+        }
+
+        .navbar-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+        }
+
+        /* Profile header */
+        .profile-header {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .cover-photo {
+            height: 200px;
+            border-radius: 8px 8px 0 0;
+            background-color: #1da1f2;
+            overflow: hidden;
+        }
+
+        .cover-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            padding-top: 70px;
+        }
+
+        .profile-picture {
+            position: absolute;
+            top: 150px;
+            left: 20px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid white;
+            overflow: hidden;
+            background-color: #eee;
+        }
+
+        .profile-picture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-details h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .profile-meta {
+            color: #657786;
+            margin-bottom: 15px;
+        }
+
+        .profile-bio {
+            margin-bottom: 15px;
+        }
+
+        /* Content layout */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .content-grid {
+                grid-template-columns: 1fr 2fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .sidebar h2 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #14171a;
+        }
+
+        .friend-list {
+            list-style: none;
+        }
+
+        .friend-list li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e6ecf0;
+        }
+
+        .friend-list li:last-child {
+            border-bottom: none;
+        }
+
+        .friend-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            background-color: #eee;
+        }
+
+        .friend-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .friend-name a {
+            color: #1da1f2;
+            text-decoration: none;
+        }
+
+        /* Posts section */
+        .posts-section {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .compose-post {
+            display: flex;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e6ecf0;
+        }
+
+        .compose-post textarea {
+            flex-grow: 1;
+            border: 1px solid #e6ecf0;
+            border-radius: 8px;
+            padding: 10px;
+            margin-right: 10px;
+            resize: none;
+            height: 80px;
+        }
+
+        .compose-post button {
+            background-color: #1da1f2;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 10px 15px;
+            font-weight: bold;
+            cursor: pointer;
+            align-self: flex-start;
+        }
+
+        .post {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e6ecf0;
+        }
+
+        .post:last-child {
+            border-bottom: none;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .post-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+            background-color: #eee;
+        }
+
+        .post-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .post-user {
+            font-weight: bold;
+        }
+
+        .post-time {
+            color: #657786;
+            margin-left: 5px;
+        }
+
+        .post-content {
+            margin-bottom: 10px;
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .post-actions button {
+            background: none;
+            border: none;
+            color: #657786;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .post-actions button:hover {
+            color: #1da1f2;
+        }
+
+        .post-actions button span {
+            margin-left: 5px;
+        }
+
+        /* Stats sidebar */
+        .stats-list {
+            list-style: none;
+        }
+
+        .stats-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e6ecf0;
+        }
+
+        .stats-list li:last-child {
+            border-bottom: none;
+        }
+
+        .logo {
+            width: 75px; /* Set your desired size */
+            height: 75px;
+            border-radius: 50%; /* This makes the image circular */
+            object-fit: cover; /* This ensures the image fills the circular area properly */
+            display: block;
+        }
+        .button {
+            display: inline-block;
+            background-color: #1da1f2;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 10px 15px;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .button.secondary {
+            background-color: transparent;
+            color: #1da1f2;
+            border: 1px solid #1da1f2;
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation Bar -->
+<nav class="navbar">
+    <div class="navbar-content">
+        <img th:src="@{/images/Juniper-logo.jpg}" alt="Site Logo" height = 30 class="logo">
+        <h1>Juniper</h1>
+        <div class="navbar-links">
+            <a href="/posts">Timeline</a>
+            <a href="/messages">Messages</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<div class="container">
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div class="cover-photo">
+            <!-- Display cover photo if exists, otherwise default cover -->
+            <img th:if="${user.coverPhoto}" th:src="${user.coverPhoto}" alt="Cover photo">
+            <div th:unless="${user.coverPhoto}" style="width: 100%; height: 100%; background-color: #1da1f2;"></div>
+        </div>
+
+        <div class="profile-picture">
+            <!-- Display profile picture if exists, otherwise default avatar -->
+            <img th:if="${user.profilePicture}" th:src="${user.profilePicture}" alt="Profile picture">
+            <img th:unless="${user.profilePicture}" src="/images/default-avatar.png" alt="Default profile">
+        </div>
+
+        <div class="profile-info">
+            <div class="profile-details">
+                <h1 th:text="${user.userName}">Username</h1>
+                <div class="profile-meta">
+                        <span th:if="${user.location}">
+                            <i>📍</i> <span th:text="${user.location}">Location</span>
+                        </span>
+                    <span th:if="${user.email}">
+                            <i>✉️</i> <span th:text="${user.email}">Email</span>
+                        </span>
+                </div>
+                <div class="profile-bio" th:if="${user.bio}">
+                    <p th:text="${user.bio}">User biography goes here. This is a placeholder for the user's bio text.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Grid -->
+    <div class="content-grid">
+        <!-- Left Sidebar - Friends List -->
+        <div class="sidebar">
+            <h2>Friends</h2>
+            <div th:if="${user.friends != null and !user.friends.isEmpty()}">
+                <ul class="friend-list">
+                    <li th:each="friend : ${user.friends}">
+                        <div class="friend-avatar">
+                            <img th:if="${friend.profilePicture}" th:src="${friend.profilePicture}" alt="Friend's profile">
+                            <img th:unless="${friend.profilePicture}" src="/images/default-avatar.png" alt="Default profile">
+                        </div>
+                        <div class="friend-name">
+                            <a th:href="@{'/users/' + ${friend.id}}" th:text="${friend.userName}">Friend Name</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div th:if="${user.friends == null or user.friends.isEmpty()}">
+                <p>No friends yet.</p>
+            </div>
+            <a href="#" class="button secondary" style="width: 100%; margin-top: 15px;">Find Friends</a>
+        </div>
+
+        <!-- Middle Section - Posts -->
+        <div class="posts-section">
+            <h2>Posts</h2>
+
+            <!-- Post composer - only show if viewing own profile -->
+            <div class="compose-post" th:if="${isOwnProfile}">
+                <textarea placeholder="What's happening?"></textarea>
+                <button>Post</button>
+            </div>
+
+            <!-- Posts list -->
+            <div th:if="${posts != null and !posts.isEmpty()}">
+                <div class="post" th:each="post : ${posts}">
+                    <div class="post-header">
+                        <div class="post-avatar">
+                            <img th:if="${user.profilePicture}" th:src="${user.profilePicture}" alt="Avatar">
+                            <img th:unless="${user.profilePicture}" src="/images/default-avatar.png" alt="Default avatar">
+                        </div>
+                        <div>
+                            <span class="post-user" th:text="${user.userName}">Username</span>
+                            <span class="post-time" th:text="${#temporals.format(post.createdAt, 'dd MMM yyyy')}">Date</span>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <p th:text="${post.content}">Post content goes here.</p>
+                    </div>
+                    <div class="post-actions">
+                        <button>
+                            <i>👍</i>
+                            <span>Like</span>
+                        </button>
+                        <button>
+                            <i>💬</i>
+                            <span>Comment</span>
+                        </button>
+                        <button>
+                            <i>↗️</i>
+                            <span>Share</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- No posts message -->
+            <div th:if="${posts == null or posts.isEmpty()}">
+                <p>No posts yet.</p>
+            </div>
+        </div>
+
+        <!-- Right Sidebar - Stats/Actions -->
+        <div class="sidebar">
+            <h2>Profile Stats</h2>
+            <ul class="stats-list">
+                <li>
+                    <span>Posts</span>
+                    <span th:text="${posts != null ? posts.size() : '0'}">0</span>
+                </li>
+                <li>
+                    <span>Friends</span>
+                    <span th:text="${user.friends != null ? user.friends.size() : '0'}">0</span>
+                </li>
+                <li>
+                    <span>Joined</span>
+                    <span th:text="${#temporals.format(user.createdAt, 'dd MMM yyyy')}">Date</span>
+                </li>
+            </ul>
+
+            <!-- Action buttons - different for own profile vs others -->
+            <div th:if="${isOwnProfile}" style="margin-top: 20px;">
+                <a th:href="@{'/users/' + ${user.id} + '/edit'}" class="button" style="width: 100%; margin-bottom: 10px;">Edit Profile</a>
+            </div>
+
+            <div th:unless="${isOwnProfile}" style="margin-top: 20px;">
+                <a href="#" class="button" style="width: 100%; margin-bottom: 10px;"
+                   th:classappend="${isFriend ? 'secondary' : ''}"
+                   th:text="${isFriend ? 'Remove Friend' : 'Add Friend'}">
+                    Add Friend
+                </a>
+                <a href="#" class="button secondary" style="width: 100%;">Message</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
